@@ -2,33 +2,33 @@
 resource "aws_security_group" "alb_security_group" {
   name        = "alb security group"
   description = "enable http/https access on port 80/443"
-  vpc_id      = 
+  vpc_id      = var.vpc_id
 
   ingress {
     description      = "http access"
-    from_port        = 
-    to_port          = 
-    protocol         = 
-    cidr_blocks      = 
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   ingress {
     description      = "https access"
-    from_port        = 
-    to_port          = 
-    protocol         = 
-    cidr_blocks      = 
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port        = 
-    to_port          = 
-    protocol         = 
-    cidr_blocks      = 
+    from_port        = 0
+    to_port          = 0
+    protocol         = -1
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   tags   = {
-    Name = 
+    Name = "alb security group"
   }
 }
 
@@ -36,33 +36,33 @@ resource "aws_security_group" "alb_security_group" {
 resource "aws_security_group" "ecs_security_group" {
   name        = "ecs security group"
   description = "enable http/https access on port 80/443 via alb sg"
-  vpc_id      = 
+  vpc_id      = var.vpc_id
 
   ingress {
     description      = "http access"
-    from_port        = 
-    to_port          = 
-    protocol         = 
-    security_groups  = 
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp" 
+    security_groups  = [aws_security_group.alb_security_group.id]
   }
 
   ingress {
     description      = "https access"
-    from_port        = 
-    to_port          = 
-    protocol         = 
-    security_groups  = 
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp" 
+    security_groups  = [aws_security_group.alb_security_group.id]
   }
 
   egress {
-    from_port        = 
-    to_port          = 
-    protocol         = 
-    cidr_blocks      = 
+    from_port        = 0
+    to_port          = 0
+    protocol         = -1
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   tags   = {
-    Name = 
+    Name = "ecs security group"
   }
 }
 
